@@ -94,7 +94,7 @@ file's directory in order to create the lock file."
                with acquired = nil
                until acquired
                while (or (null timeout) (> timeout 0))
-               do (condition-case err
+               do (condition-case nil
                       (progn
                         (lock-buffer file)
                         (setq acquired t))
