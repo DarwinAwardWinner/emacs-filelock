@@ -1,4 +1,4 @@
-;;; filelock.el --- Functions for manipulating file locks programmatically -*- lexical-binding: t -*-
+;;; filelock.el --- Functions for manipulating file locks -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2018 Ryan C. Thompson
 
@@ -6,8 +6,8 @@
 ;; Author: Ryan C. Thompson
 ;; Created: Thu May 24 13:39:36 2018 (-0700)
 ;; Version: 0.1
-;; Package-Requires: ((emacs "0") (cl-lib "0") (f "0"))
-;; URL:
+;; Package-Requires: ((emacs "24") (cl-lib "0") (f "0"))
+;; URL: https://github.com/DarwinAwardWinner/emacs-filelock
 ;; Keywords: extensions, files, tools
 
 ;; This file is NOT part of GNU Emacs.
