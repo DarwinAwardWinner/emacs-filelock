@@ -31,6 +31,13 @@
 ;; `release-file-lock', and a macro called `with-file-lock' is also
 ;; provided.
 
+;; Note that locking a file using these functions does not prevent
+;; Emacs from unlocking it under the usual circumstances. For example,
+;; if you call `acquire-file-lock' on a file and then save a buffer
+;; visiting the same file, the lock will still be released as usual
+;; when the buffer is saved. It is probably not practical to fix this
+;; without modifying the C code of Emacs.
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
 ;; This program is free software: you can redistribute it and/or modify
