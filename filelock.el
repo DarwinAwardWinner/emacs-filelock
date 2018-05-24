@@ -27,13 +27,13 @@
 
 ;; This package provides a simple interface for manually locking and
 ;; unlocking files using the standard Emacs locks, suitable for use in
-;; programming. The basic functions are `acquire-file-lock' and
-;; `release-file-lock', and a macro called `with-file-lock' is also
+;; programming. The basic functions are `filelock-acquire-lock' and
+;; `filelock-release-lock', and a macro called `with-file-lock' is also
 ;; provided.
 
 ;; Note that locking a file using these functions does not prevent
 ;; Emacs from unlocking it under the usual circumstances. For example,
-;; if you call `acquire-file-lock' on a file and then save a buffer
+;; if you call `filelock-acquire-lock' on a file and then save a buffer
 ;; visiting the same file, the lock will still be released as usual
 ;; when the buffer is saved. It is probably not practical to fix this
 ;; without modifying the C code of Emacs.
@@ -60,14 +60,14 @@
 (require 'f)
 (eval-when-compile (require 'cl-lib))
 
-(defsubst file-lock-owned-p (file)
+(defsubst filelock-owned-p (file)
   "Return non-nil if FILE is locked by the current Emacs.
 
 If FILE is not locked or is locked by another Emacs process,
 returns nil."
   (eq t (file-locked-p file)))
 
-(defun acquire-file-lock (&optional file timeout)
+(defun filelock-acquire-lock (&optional file timeout)
   "Acquire the file lock on FILE for this Emacs.
 
 If TIMEOUT is non-nil, a `file-locked' signal will be raised if the
@@ -105,31 +105,31 @@ file's directory in order to create the lock file."
                ;; the appropriate signal.
                finally return (lock-buffer file)))
           (set-buffer-modified-p nil))))
-    (cl-assert (file-lock-owned-p file))))
+    (cl-assert (filelock-owned-p file))))
 
-(defun release-file-lock (&optional file)
+(defun filelock-release-lock (&optional file)
   "Release any file lock this Emacs is holding on FILE."
   (let ((file (f-expand (or file (buffer-file-name))))
         (lockfile (f-join (f-dirname file)
                           (concat ".#" (f-filename file)))))
-    (when (file-lock-owned-p file)
+    (when (filelock-owned-p file)
       (delete-file lockfile))
-    (cl-assert (not (file-lock-owned-p file)))))
+    (cl-assert (not (filelock-owned-p file)))))
 
-(defmacro with-file-lock (file &rest body)
+(defmacro filelock-with-lock (file &rest body)
   "Evaluate BODY while holding the lock for FILE.
 
 If Emacs needed to acquire the lock for FILE before evaluating
 BODY, it will release it afterward. If the lock was already held,
 it will not be released."
   (declare (indent 1))
-  `(if (file-lock-owned-p ,file)
+  `(if (filelock-owned-p ,file)
        (progn ,@body)
      (unwind-protect
          (progn
-           (acquire-file-lock ,file)
+           (filelock-acquire-lock ,file)
            ,@body)
-       (release-file-lock ,file))))
+       (filelock-release-lock ,file))))
 
 (provide 'filelock)
 
